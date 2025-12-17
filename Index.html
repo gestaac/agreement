@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thesis Consultation Agreement</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background: #f3f4f6; }
+        
+        /* A4 Paper Look */
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            margin: 10mm auto;
+            border: 1px solid #d3d3d3;
+            border-radius: 5px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        /* Signature Canvas Styling */
+        .sig-wrapper {
+            position: relative;
+            width: 100%;
+            height: 120px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 6px;
+            background-color: #f8fafc;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* PRINT STYLES - Crucial for "Ready to Print/Share" */
+        @media print {
+            body { background: white; margin: 0; }
+            .page {
+                margin: 0;
+                box-shadow: none;
+                border: none;
+                width: 100%;
+                padding: 0; /* Adjust padding for printer margins */
+            }
+            .no-print, .sig-controls {
+                display: none !important;
+            }
+            .sig-wrapper {
+                border: none; /* Remove dashed border on print */
+                background: transparent;
+            }
+            /* Input fields look like text when printed */
+            input[type="text"], input[type="date"], textarea {
+                border: none;
+                background: transparent;
+                padding: 0;
+                font-weight: bold;
+                width: auto;
+                resize: none;
+            }
+            /* Hide placeholders on print */
+            ::placeholder { color: transparent; }
+        }
+    </style>
+</head>
+<body class="py-10">
+
+    <div class="fixed bottom-5 right-5 no-print z-50 flex gap-2">
+        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition">
+            🖨️ Finalize & Save as PDF
+        </button>
+    </div>
+
+    <div class="page">
+        
+        <div class="text-center border-b-2 border-gray-800 pb-4 mb-8">
+            <h1 class="text-3xl font-bold uppercase tracking-wide text-gray-900">Thesis Consultation Agreement</h1>
+            <p class="text-sm text-gray-500 mt-2">Professional Technical Services</p>
+        </div>
+
+        <div class="mb-8 text-sm leading-relaxed">
+            <p class="mb-4">
+                This Agreement is made and entered into on 
+                <input type="date" id="contractDate" class="font-bold border-b border-gray-300 focus:outline-none px-2 text-gray-800">, by and between:
+            </p>
+            
+            <div class="grid grid-cols-1 gap-4 mb-4">
+                <div>
+                    <strong>1. The Consultant:</strong><br>
+                    <span class="text-lg font-bold text-gray-900">Chester Allan F. Bautista</span><br>
+                    <span class="text-gray-600 italic">Full Stack Developer & Technical Consultant</span>
+                </div>
+                
+                <div class="mt-4">
+                    <strong>2. The Client (Student Groups Representative):</strong><br>
+                    <input type="text" placeholder="Enter Representative Name" class="w-full font-bold text-lg border-b border-gray-400 focus:outline-none py-1 bg-yellow-50 focus:bg-white transition" id="studentName">
+                    <p class="text-xs text-gray-500 mt-1">Acting as the authorized representative for the following 3 Thesis Groups:</p>
+                    <textarea placeholder="1. Group Name / Project Title&#10;2. Group Name / Project Title&#10;3. Group Name / Project Title" class="w-full mt-2 border border-gray-200 p-2 text-sm rounded bg-gray-50 focus:bg-white focus:outline-none h-24 resize-none" id="groupList"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-sm font-bold uppercase border-b border-gray-300 mb-2">3. Scope of Services</h2>
+            <textarea class="w-full h-32 text-sm text-gray-700 leading-relaxed border-none resize-none focus:outline-none bg-transparent" spellcheck="false">
+The Consultant agrees to provide technical development, coding, and advisory services for the completion of the thesis projects for the groups listed above. 
+
+Services include:
+1. Full Stack Development (Web/Mobile Application).
+2. Database Design and Implementation.
+3. Source Code Turnover and Deployment.
+4. Technical Consultation until the final defense period (approx. 2 months).
+            </textarea>
+        </div>
+
+        <div class="mb-12">
+            <h2 class="text-sm font-bold uppercase border-b border-gray-300 mb-2">4. Terms & Acceptance</h2>
+            <p class="text-xs text-gray-500 text-justify">
+                By signing below, the Representative acknowledges that they have the authority to bind the groups listed above to this agreement. The code and intellectual property rights will be transferred to the students upon full settlement of agreed fees.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-12 mt-auto align-bottom">
+            
+            <div>
+                <div class="sig-wrapper">
+                    <canvas id="canvasConsultant"></canvas>
+                </div>
+                <div class="flex justify-between mt-1 mb-2 no-print">
+                    <small class="text-gray-400">Sign above</small>
+                    <button onclick="clearPad(padConsultant)" class="text-xs text-red-500 hover:underline">Clear</button>
+                </div>
+                <div class="border-t-2 border-gray-800 mt-2 pt-2">
+                    <p class="font-bold text-sm uppercase">Chester Allan F. Bautista</p>
+                    <p class="text-xs text-gray-500">Consultant / Developer</p>
+                </div>
+            </div>
+
+            <div>
+                <div class="sig-wrapper">
+                    <canvas id="canvasStudent"></canvas>
+                </div>
+                <div class="flex justify-between mt-1 mb-2 no-print">
+                    <small class="text-gray-400">Sign above</small>
+                    <button onclick="clearPad(padStudent)" class="text-xs text-red-500 hover:underline">Clear</button>
+                </div>
+                <div class="border-t-2 border-gray-800 mt-2 pt-2">
+                    <p class="font-bold text-sm uppercase"><span id="displayStudentName">Representative Name</span></p>
+                    <p class="text-xs text-gray-500">Student Groups Representative</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 1. Auto-fill Date
+        document.getElementById('contractDate').valueAsDate = new Date();
+
+        // 2. Sync Student Name to Signature Line
+        const nameInput = document.getElementById('studentName');
+        const nameDisplay = document.getElementById('displayStudentName');
+        
+        nameInput.addEventListener('input', (e) => {
+            nameDisplay.innerText = e.target.value || "Representative Name";
+        });
+
+        // 3. Initialize Signature Pads
+        function initPad(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            
+            // Handle High DPI screens (like Retina) so ink isn't blurry
+            function resizeCanvas() {
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                canvas.width = canvas.offsetWidth * ratio;
+                canvas.height = canvas.offsetHeight * ratio;
+                canvas.getContext("2d").scale(ratio, ratio);
+            }
+            window.addEventListener("resize", resizeCanvas);
+            resizeCanvas();
+
+            return new SignaturePad(canvas, {
+                backgroundColor: 'rgba(255, 255, 255, 0)', // Transparent
+                penColor: 'black'
+            });
+        }
+
+        const padConsultant = initPad('canvasConsultant');
+        const padStudent = initPad('canvasStudent');
+
+        // Helper to clear pads
+        window.clearPad = function(padInstance) {
+            padInstance.clear();
+        }
+    </script>
+</body>
+</html>
